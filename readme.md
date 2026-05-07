@@ -12,7 +12,7 @@ git clone git@github.com:boschresearch/CNC_Machining.git
 2. Making sure that the dependencies from [Damavand](https://pydamavand.github.io/documentation/) are installed; to do so, execute the following command:
 
 ```
-pip install -r damvand/requirements.txt
+pip install -r damavand/requirements.txt
 ```
 
 3. Open the `playground.ipynb` notebook and try running it; it should be executable, without any error.
