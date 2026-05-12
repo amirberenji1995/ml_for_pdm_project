@@ -194,6 +194,8 @@ class DnnAutoencoder(BaseAutoencoder):
             nn.Flatten(),
             nn.Linear(input_dim, 400),
             nn.Tanh(),
+            nn.Linear(400, 300),
+            nn.Tanh(),
             nn.Linear(300, 200),
             nn.Tanh(),
             nn.Linear(200, 100),
