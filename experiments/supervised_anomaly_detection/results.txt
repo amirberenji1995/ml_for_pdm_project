@@ -1,0 +1,81 @@
+
+============= Experiment configuration =============
+config:
+  do_contrastive_pretraining: False
+  downsample_majority_class: False
+  contrastive_epochs: 10
+  classification_epochs: 15
+  contrastive_lr: 0.001
+  classification_lr: 0.0005
+  batch_size_contrastive: 128
+  batch_size_classify: 32
+
+================ Evaluation Metrics ================
+              precision    recall  f1-score   support
+
+        good       0.98      1.00      0.99       584
+         bad       1.00      0.71      0.83        38
+
+    accuracy                           0.98       622
+   macro avg       0.99      0.86      0.91       622
+weighted avg       0.98      0.98      0.98       622
+
+Confusion Matrix:
+True Good: 584 | False Bad: 0
+False Good: 11 | True Bad: 27
+
+==================================================
+
+============= Experiment configuration =============
+config:
+  do_contrastive_pretraining: False
+  downsample_majority_class: True
+  contrastive_epochs: 10
+  classification_epochs: 15
+  contrastive_lr: 0.001
+  classification_lr: 0.0005
+  batch_size_contrastive: 128
+  batch_size_classify: 32
+
+================ Evaluation Metrics ================
+              precision    recall  f1-score   support
+
+        good       0.99      0.98      0.99       584
+         bad       0.76      0.92      0.83        38
+
+    accuracy                           0.98       622
+   macro avg       0.88      0.95      0.91       622
+weighted avg       0.98      0.98      0.98       622
+
+Confusion Matrix:
+True Good: 573 | False Bad: 11
+False Good: 3 | True Bad: 35
+
+==================================================
+
+============= Experiment configuration =============
+config:
+  do_contrastive_pretraining: True
+  downsample_majority_class: True
+  contrastive_epochs: 10
+  classification_epochs: 15
+  contrastive_lr: 0.001
+  classification_lr: 0.0005
+  batch_size_contrastive: 128
+  batch_size_classify: 32
+
+================ Evaluation Metrics ================
+              precision    recall  f1-score   support
+
+        good       0.99      0.96      0.98       584
+         bad       0.61      0.89      0.72        38
+
+    accuracy                           0.96       622
+   macro avg       0.80      0.93      0.85       622
+weighted avg       0.97      0.96      0.96       622
+
+Confusion Matrix:
+True Good: 562 | False Bad: 22
+False Good: 4 | True Bad: 34
+
+==================================================
