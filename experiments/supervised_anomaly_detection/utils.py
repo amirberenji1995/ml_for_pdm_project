@@ -125,8 +125,9 @@ def evaluate_model(
 
     with torch.no_grad():
         for inputs, labels in eval_loader:
-            outputs = model(inputs)
-            _, predicted = torch.max(outputs, 1)
+            logits = model(inputs)
+            probabilities = torch.softmax(logits, dim=1)
+            _, predicted = torch.max(probabilities, 1)
 
             all_preds.extend(predicted.cpu().numpy())
             all_labels.extend(labels.cpu().numpy())
@@ -175,6 +176,7 @@ def evaluate_model(
     return {
         "predictions": all_preds,
         "true_labels": all_labels,
+        "classification_report": report_text,
         "confusion_matrix": cm,
     }
 
