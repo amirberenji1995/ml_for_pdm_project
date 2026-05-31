@@ -6,6 +6,7 @@ from hust_dataset.experiments.model_repository import (
 
 power_classifiers = {
     "random_forest": RandomForestClassifier,
+    # TODO: Add other power classifiers
     # "SVM": SVC,
     # "MLP": MLPClassifier,
 }
