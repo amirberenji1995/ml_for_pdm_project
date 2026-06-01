@@ -29,10 +29,48 @@ from keras.optimizers import Adam
 from sklearn.metrics import confusion_matrix
 from hust_dataset.experiments.config import power_classifiers, Configurations
 from hust_dataset.experiments.result import Result
+import argparse
+import json
+
+parser = argparse.ArgumentParser()
+
+parser.add_argument(
+    "--repetitions",
+    type=int,
+    help="Number of repetitions for the experiment",
+    default=5,
+)
+
+parser.add_argument(
+    "--experiment_type",
+    type=str,
+    choices=["with_additional_features", "original"],
+    default="original",
+)
+
+parser.add_argument(
+    "--power_classifier",
+    type=str,
+    choices=["RF", "SVM", "ANN"],
+    default=None,
+)
+
+parser.add_argument("--power_classifier_params", type=json.loads, default=None)
+
 
 ### Instantiating from the configurations class
 
 config = Configurations().__dict__
+
+### Parsing the command line arguments
+config["repetitions"] = parser.parse_args().repetitions
+config["experiment_type"] = parser.parse_args().experiment_type
+config["power_classifier"] = parser.parse_args().power_classifier
+
+if parser.parse_args().power_classifier_params is not None:
+    config["power_classifier_params"][config["power_classifier"]].update(
+        parser.parse_args().power_classifier_params
+    )
 
 ### Generating random seeds
 
@@ -250,4 +288,6 @@ if __name__ == "__main__":
     results = main(config, random_seeds)
 
     ### Exporting the results
-    results.export_json(base_dir="results.json")
+    results.export_json(
+        base_dir=f"results/{config['experiment_type']}_{config['power_classifier']}_{config['power_classifier_params'][config['power_classifier']]}.json"
+    )

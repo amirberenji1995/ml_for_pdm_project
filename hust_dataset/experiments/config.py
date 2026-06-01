@@ -7,8 +7,7 @@ from hust_dataset.experiments.model_repository import (
 )
 
 power_classifiers = {
-    "random_forest": RandomForestClassifier,
-    # TODO: Add other power classifiers
+    "RF": RandomForestClassifier,
     "SVM": SVC,
     "ANN": ann_power_classifier,
 }
@@ -19,10 +18,10 @@ class Configurations:
         self.dataset_base_dir = "/nfs/home/amiber/ml_for_pdm_course_project/hust/HUST bearing a practical dataset for ball bearing fault diagnosis/HUST bearing dataset/"
         self.dataset_mining_params = {"win_len": 5000, "hop_len": 5000}
         self.experiment_type = "with_additional_features"
-        self.power_classifier = "random_forest"
+        self.power_classifier = None
         self.power_classifier_params = {
             "SVM": {"probability": True},
-            "random_forest": {},
+            "RF": {},
             "ANN": {
                 "loss": "categorical_crossentropy",
                 "lr": 1e-3,
