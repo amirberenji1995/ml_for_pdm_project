@@ -1,0 +1,17 @@
+### Baseline
+python experiment_routine.py --experiment_type original
+
+### ANN
+python experiment_routine.py --experiment_type with_additional_features --state_classifier ANN
+
+### Random Forest
+python experiment_routine.py --experiment_type with_additional_features --state_classifier RF --state_classifier_params '{"n_estimators": 50}'
+python experiment_routine.py --experiment_type with_additional_features --state_classifier RF --state_classifier_params '{"n_estimators": 100}'
+python experiment_routine.py --experiment_type with_additional_features --state_classifier RF --state_classifier_params '{"n_estimators": 20}'
+python experiment_routine.py --experiment_type with_additional_features --state_classifier RF --state_classifier_params '{"n_estimators": 190}'
+
+### SVM
+python experiment_routine.py --experiment_type with_additional_features --state_classifier SVM --state_classifier_params '{"kernel": "linear"}'
+python experiment_routine.py --experiment_type with_additional_features --state_classifier SVM --state_classifier_params '{"kernel": "sigmoid"}'
+python experiment_routine.py --experiment_type with_additional_features --state_classifier SVM --state_classifier_params '{"kernel": "poly", "degree": 3}'
+python experiment_routine.py --experiment_type with_additional_features --state_classifier SVM --state_classifier_params '{"kernel": "rbf"}'

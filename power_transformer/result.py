@@ -21,30 +21,30 @@ class Result:
         self.config = config
         self.repetitions = []
 
-    def tabulate(self):
-        seeds = [rep["seed"] for rep in self.repetitions]
-        power_classification_accuracies = [
-            rep["power_classifier_evaluation"]["test_accuracy"]
-            for rep in self.repetitions
-        ]
-        fault_classification_accuracies = [
-            rep["fault_classifier_evaluation"]["test_accuracy"]
-            for rep in self.repetitions
-        ]
+    # def tabulate(self):
+    #     seeds = [rep["seed"] for rep in self.repetitions]
+    #     power_classification_accuracies = [
+    #         rep["power_classifier_evaluation"]["test_accuracy"]
+    #         for rep in self.repetitions
+    #     ]
+    #     fault_classification_accuracies = [
+    #         rep["fault_classifier_evaluation"]["test_accuracy"]
+    #         for rep in self.repetitions
+    #     ]
 
-        return pd.DataFrame(
-            {
-                "seed": seeds,
-                "power_classification_accuracy": power_classification_accuracies,
-                "fault_classification_accuracy": fault_classification_accuracies,
-            }
-        )
+    #     return pd.DataFrame(
+    #         {
+    #             "seed": seeds,
+    #             "power_classification_accuracy": power_classification_accuracies,
+    #             "fault_classification_accuracy": fault_classification_accuracies,
+    #         }
+    #     )
 
     def _get_serializable_config(self) -> dict:
         """Filters out non-serializable elements like function references from the config dict."""
         clean_config = {}
         for key, value in self.config.items():
-            if key == "fault_classifiers":
+            if key == "regressor":
                 continue
             clean_config[key] = value
         return clean_config
@@ -66,7 +66,6 @@ class Result:
         export_data = {
             "config": self._get_serializable_config(),
             "repetitions": self.repetitions,
-            "classes": self.classes,
         }
 
         # 2. Tell json.dump to use our NumpyEncoder
@@ -94,12 +93,7 @@ class Result:
         loaded_repetitions = []
         for rep in data["repetitions"]:
             rep_copy = rep.copy()
-            if "fault_classifier_confusion_matrix" in rep_copy:
-                cm_list = rep_copy["fault_classifier_confusion_matrix"]
-                if cm_list is not None:
-                    rep_copy["fault_classifier_confusion_matrix"] = np.array(cm_list)
             loaded_repetitions.append(rep_copy)
 
         self.repetitions = loaded_repetitions
-        self.classes = data["classes"]
         print(f"Successfully loaded results from {filepath}")

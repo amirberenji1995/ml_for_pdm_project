@@ -43,4 +43,17 @@ def with_features_regressor_model():
 
 
 def ann_state_classifier():
-    pass
+    input = Input(shape=(14,), name="input")
+    emb = Dense(
+        units=14,
+        activation="relu",
+        name="HL1",
+    )(input)
+    emb = Dense(
+        units=14,
+        activation="relu",
+        name="HL2",
+    )(emb)
+    predicted_values = Dense(units=7, activation="softmax")(emb)
+
+    return Model(inputs=input, outputs=predicted_values)

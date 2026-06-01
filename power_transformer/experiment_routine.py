@@ -29,13 +29,13 @@ parser.add_argument(
 )
 
 parser.add_argument(
-    "--power_classifier",
+    "--state_classifier",
     type=str,
     choices=["RF", "SVM", "ANN"],
     default=None,
 )
 
-parser.add_argument("--power_classifier_params", type=json.loads, default=None)
+parser.add_argument("--state_classifier_params", type=json.loads, default={})
 
 
 ### Instantiating from the configurations class
@@ -45,12 +45,12 @@ config = Configurations().__dict__
 ### Parsing the command line arguments
 config["repetitions"] = parser.parse_args().repetitions
 config["experiment_type"] = parser.parse_args().experiment_type
-config["power_classifier"] = parser.parse_args().power_classifier
-
-if parser.parse_args().power_classifier_params is not None:
-    config["power_classifier_params"][config["power_classifier"]].update(
-        parser.parse_args().power_classifier_params
-    )
+config["state_classifier"] = parser.parse_args().state_classifier
+if parser.parse_args().state_classifier is not None:
+    if parser.parse_args().state_classifier_params is not None:
+        config["state_classifier_params"][config["state_classifier"]].update(
+            parser.parse_args().state_classifier_params
+        )
 
 ### Generating random seeds
 
@@ -100,7 +100,7 @@ def main(config, random_seeds):
     ### Feature, Target and Auxiliary declaration
 
     x = df.iloc[:, :14]
-    y = df.iloc[:, 14, 15]
+    y = df.iloc[:, 14:16]
     z = df.iloc[:, -1]
 
     ### Looping through the random seeds
@@ -125,8 +125,8 @@ def main(config, random_seeds):
         ### Scaling the targets
 
         target_scaler = MinMaxScaler()
-        y_train_scaled = target_scaler.fit_transform(y_train.values.reshape(-1, 1))
-        y_test_scaled = target_scaler.transform(y_test.values.reshape(-1, 1))
+        y_train_scaled = target_scaler.fit_transform(y_train)
+        y_test_scaled = target_scaler.transform(y_test)
 
         ### Checking the experiment type
 
@@ -214,8 +214,9 @@ def main(config, random_seeds):
 
         ### Compiling the fault classifier
         opt = Adam(
-            learning_rate=config["regressor"]["lr"],
-            weight_decay=config["regressor"]["lr"] / config["regressor"]["epochs"],
+            learning_rate=config["regressors_training_params"]["lr"],
+            weight_decay=config["regressors_training_params"]["lr"]
+            / config["regressors_training_params"]["epochs"],
         )
 
         regressor.compile(
@@ -229,13 +230,15 @@ def main(config, random_seeds):
         history = regressor.fit(
             x=x_train_scaled,
             y=y_train_scaled,
-            epochs=config["regressor"]["epochs"],
-            validation_split=config["regressor"]["val_split"],
+            epochs=config["regressors_training_params"]["epochs"],
+            validation_split=config["regressors_training_params"]["val_split"],
             verbose=1,
         )
 
         y_train_pred = regressor.predict(x_train_scaled)
         y_test_pred = regressor.predict(x_test_scaled)
+
+        print(f"\n\n{y_train_pred.shape}, {y_train_scaled.shape}\n\n")
 
         ### Evaluating the fault classifier
         temp_results["regressor_evaluation"] = {
@@ -274,7 +277,8 @@ if __name__ == "__main__":
     ### Running the experiment
     results = main(config, random_seeds)
 
+    ### Declaring the file_name
+    file_name = f"results/{config['experiment_type']}_{config['state_classifier'] if config['state_classifier'] is not None else 'None'}_{config['state_classifier_params'][config['state_classifier']] if config['state_classifier'] is not None else 'None'}.json"
+
     ### Exporting the results
-    results.export_json(
-        base_dir=f"results/{config['experiment_type']}_{config['state_classifier']}_{config['state_classifier_params'][config['state_classifier']]}.json"
-    )
+    results.export_json(base_dir=file_name)
