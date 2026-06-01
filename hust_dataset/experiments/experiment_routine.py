@@ -123,24 +123,70 @@ def main(config, random_seeds):
 
         if config["experiment_type"] == "with_additional_features":
             ### Instantiating the power classifier
-            power_classifier = power_classifiers[config["power_classifier"]](
-                **config["power_classifier_params"]
-            )
+            if config["power_classifier"] == "ANN":
+                power_classifier = power_classifiers[config["power_classifier"]]()
+
+            else:
+                power_classifier = power_classifiers[config["power_classifier"]](
+                    **config["power_classifier_params"][config["power_classifier"]]
+                )
+
+            if config["power_classifier"] == "ANN":
+                power_binarizer = LabelBinarizer()
+                z_train = power_binarizer.fit_transform(z_train)
+                z_test = power_binarizer.transform(z_test)
+
+                optimizer = Adam(
+                    learning_rate=config["power_classifier_params"][
+                        config["power_classifier"]
+                    ]["lr"],
+                    weight_decay=config["power_classifier_params"][
+                        config["power_classifier"]
+                    ]["lr"]
+                    / config["power_classifier_params"][config["power_classifier"]][
+                        "epochs"
+                    ],
+                )
+                power_classifier.compile(
+                    loss=config["power_classifier_params"][config["power_classifier"]][
+                        "loss"
+                    ],
+                    optimizer=optimizer,
+                    metrics=["accuracy"],
+                )
 
             ### Training the power classifier
             power_classifier.fit(x_train_scaled, z_train)
 
             ### Evaluating the power classifier
-            temp_results["power_classifier_evaluation"] = {
-                "training_accuracy": power_classifier.score(x_train_scaled, z_train),
-                "test_accuracy": power_classifier.score(x_test_scaled, z_test),
-            }
+            if config["power_classifier"] == "ANN":
+                temp_results["power_classifier_evaluation"] = {
+                    "training_accuracy": power_classifier.evaluate(
+                        x_train_scaled, z_train
+                    )[1],
+                    "test_accuracy": power_classifier.evaluate(x_test_scaled, z_test)[
+                        1
+                    ],
+                }
+
+            else:
+                temp_results["power_classifier_evaluation"] = {
+                    "training_accuracy": power_classifier.score(
+                        x_train_scaled, z_train
+                    ),
+                    "test_accuracy": power_classifier.score(x_test_scaled, z_test),
+                }
 
             ### Checking the auxiliary feature type
 
             if config["aux_feature_type"] == "softcore":
-                aux_features_train = power_classifier.predict_proba(x_train_scaled)
-                aux_features_test = power_classifier.predict_proba(x_test_scaled)
+                if config["power_classifier"] == "ANN":
+                    aux_features_train = power_classifier.predict(x_train_scaled)
+                    aux_features_test = power_classifier.predict(x_test_scaled)
+                else:
+                    aux_features_train = power_classifier.predict_proba(x_train_scaled)
+                    aux_features_test = power_classifier.predict_proba(x_test_scaled)
+
             elif config["aux_feature_type"] == "hardcore":
                 # TODO: Implement hardcore
 

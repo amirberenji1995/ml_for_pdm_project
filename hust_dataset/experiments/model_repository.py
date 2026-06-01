@@ -42,3 +42,24 @@ def with_additional_features_model_creator():
     predicted_values = Dense(units=7, activation="softmax")(emb)
 
     return Model(inputs=input, outputs=predicted_values)
+
+
+def ann_power_classifier():
+    """
+    This is a simple ANN model that uses original 11 time domain features to predict power consumption in a three-dimensional space
+    """
+
+    input = Input(shape=(11,), name="input")
+    emb = Dense(
+        units=11,
+        activation="relu",
+        name="HL1",
+    )(input)
+    emb = Dense(
+        units=11,
+        activation="relu",
+        name="HL2",
+    )(emb)
+    predicted_values = Dense(units=3, activation="softmax")(emb)
+
+    return Model(inputs=input, outputs=predicted_values)
