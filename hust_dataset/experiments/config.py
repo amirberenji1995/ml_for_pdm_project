@@ -30,7 +30,7 @@ class Configurations:
             },
         }
         self.aux_feature_type = "softcore"
-        self.repetitions = 1
+        self.repetitions = 5
         self.test_size = 0.2
         self.fault_classifiers = {
             "original": original_model_creator,

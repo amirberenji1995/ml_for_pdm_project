@@ -28,6 +28,7 @@ from sklearn.model_selection import train_test_split
 from keras.optimizers import Adam
 from sklearn.metrics import confusion_matrix
 from hust_dataset.experiments.config import power_classifiers, Configurations
+from hust_dataset.experiments.result import Result
 
 ### Instantiating from the configurations class
 
@@ -42,10 +43,7 @@ def main(config, random_seeds):
 
     ### Creating a dictionary to store the results
 
-    results = {
-        "config": config,
-        "repetitions": [],
-    }
+    results = Result(config)
 
     ### Loading the dataset
 
@@ -64,6 +62,8 @@ def main(config, random_seeds):
 
     fault_encoder = LabelEncoder()
     metadata["fault_encoded"] = fault_encoder.fit_transform(metadata["fault"])
+
+    results.classes = fault_encoder.classes_
 
     ### Encoding the powers
 
@@ -240,7 +240,7 @@ def main(config, random_seeds):
             y_pred=np.argmax(fault_classifer.predict(x_test_scaled), axis=1),
         )
 
-        results["repetitions"].append(temp_results)
+        results.repetitions.append(temp_results)
 
     return results
 
@@ -248,5 +248,6 @@ def main(config, random_seeds):
 if __name__ == "__main__":
     ### Running the experiment
     results = main(config, random_seeds)
-    # TODO: Find a way to export the results decently
-    print(results)
+
+    ### Exporting the results
+    results.export_json(base_dir="results.json")
