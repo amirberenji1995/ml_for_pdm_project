@@ -247,8 +247,8 @@ def main(config, random_seeds):
                 "test": mean_squared_error(y_test_pred, y_test_scaled),
             },
             "mae_losses": {
-                "train": mean_squared_error(y_train_pred, y_train_scaled),
-                "test": mean_squared_error(y_test_pred, y_test_scaled),
+                "train": mean_absolute_error(y_train_pred, y_train_scaled),
+                "test": mean_absolute_error(y_test_pred, y_test_scaled),
             },
             "mse_health_index": {
                 "train": mean_squared_error(y_train_pred[:, 0], y_train_scaled[:, 0]),
