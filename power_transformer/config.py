@@ -24,7 +24,7 @@ class Configurations:
             "ANN": {
                 "loss": "categorical_crossentropy",
                 "lr": 1e-3,
-                "epochs": 1,
+                "epochs": 1000,
             },
         }
         self.aux_feature_type = "softcore"
@@ -35,7 +35,7 @@ class Configurations:
             "with_additional_features": with_features_regressor_model,
         }
         self.regressors_training_params = {
-            "lr": 5e-3,
-            "epochs": 1,
+            "lr": 1e-3,
+            "epochs": 1000,
             "val_split": 0.2,
         }

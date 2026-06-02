@@ -21,24 +21,51 @@ class Result:
         self.config = config
         self.repetitions = []
 
-    # def tabulate(self):
-    #     seeds = [rep["seed"] for rep in self.repetitions]
-    #     power_classification_accuracies = [
-    #         rep["power_classifier_evaluation"]["test_accuracy"]
-    #         for rep in self.repetitions
-    #     ]
-    #     fault_classification_accuracies = [
-    #         rep["fault_classifier_evaluation"]["test_accuracy"]
-    #         for rep in self.repetitions
-    #     ]
+    def tabulate(self):
+        seeds = [rep["seed"] for rep in self.repetitions]
+        state_classifier_accuracies = [
+            rep["state_classifier_evaluation"]["test_accuracy"]
+            if rep.get("state_classifier_evaluation")
+            else None
+            for rep in self.repetitions
+        ]
+        mse_losses = [
+            rep["regressor_evaluation"]["mse_losses"]["test"]
+            for rep in self.repetitions
+        ]
+        mae_losses = [
+            rep["regressor_evaluation"]["mae_losses"]["test"]
+            for rep in self.repetitions
+        ]
+        mse_health_index = [
+            rep["regressor_evaluation"]["mse_health_index"]["test"]
+            for rep in self.repetitions
+        ]
+        mse_life_expectation = [
+            rep["regressor_evaluation"]["mse_life_expectation"]["test"]
+            for rep in self.repetitions
+        ]
+        mae_health_index = [
+            rep["regressor_evaluation"]["mae_health_index"]["test"]
+            for rep in self.repetitions
+        ]
+        mae_life_expectation = [
+            rep["regressor_evaluation"]["mae_life_expectation"]["test"]
+            for rep in self.repetitions
+        ]
 
-    #     return pd.DataFrame(
-    #         {
-    #             "seed": seeds,
-    #             "power_classification_accuracy": power_classification_accuracies,
-    #             "fault_classification_accuracy": fault_classification_accuracies,
-    #         }
-    #     )
+        return pd.DataFrame(
+            {
+                "seed": seeds,
+                "state_classifier_accuracy": state_classifier_accuracies,
+                "mse_losses": mse_losses,
+                "mae_losses": mae_losses,
+                "mse_health_index": mse_health_index,
+                "mse_life_expectation": mse_life_expectation,
+                "mae_health_index": mae_health_index,
+                "mae_life_expectation": mae_life_expectation,
+            }
+        )
 
     def _get_serializable_config(self) -> dict:
         """Filters out non-serializable elements like function references from the config dict."""

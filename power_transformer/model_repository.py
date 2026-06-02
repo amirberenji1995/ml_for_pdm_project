@@ -8,12 +8,12 @@ def original_regressor_model():
     """
     input = Input(shape=(14,), name="input")
     emb = Dense(
-        units=14,
+        units=9,
         activation="tanh",
         name="HL1",
     )(input)
     emb = Dense(
-        units=14,
+        units=4,
         activation="tanh",
         name="HL2",
     )(emb)
@@ -28,12 +28,12 @@ def with_features_regressor_model():
     """
     input = Input(shape=(21,), name="input")
     emb = Dense(
-        units=21,
+        units=16,
         activation="tanh",
         name="HL1",
     )(input)
     emb = Dense(
-        units=21,
+        units=11,
         activation="tanh",
         name="HL2",
     )(emb)
@@ -45,15 +45,10 @@ def with_features_regressor_model():
 def ann_state_classifier():
     input = Input(shape=(14,), name="input")
     emb = Dense(
-        units=14,
+        units=10,
         activation="relu",
         name="HL1",
     )(input)
-    emb = Dense(
-        units=14,
-        activation="relu",
-        name="HL2",
-    )(emb)
     predicted_values = Dense(units=7, activation="softmax")(emb)
 
     return Model(inputs=input, outputs=predicted_values)

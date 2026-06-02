@@ -1,0 +1,195 @@
+{
+    "config": {
+        "dataset_path": "power_transofrmer_dataset.csv",
+        "experiment_type": "with_additional_features",
+        "state_classifier": "RF",
+        "state_classifier_params": {
+            "SVM": {
+                "probability": true
+            },
+            "RF": {
+                "n_estimators": 100
+            },
+            "ANN": {
+                "loss": "categorical_crossentropy",
+                "lr": 0.001,
+                "epochs": 1000
+            }
+        },
+        "aux_feature_type": "softcore",
+        "repetitions": 5,
+        "test_size": 0.2,
+        "regressors_training_params": {
+            "lr": 0.001,
+            "epochs": 1000,
+            "val_split": 0.2
+        }
+    },
+    "repetitions": [
+        {
+            "seed": 18,
+            "state_classifier_evaluation": {
+                "training_accuracy": 1.0,
+                "test_accuracy": 0.847457627118644
+            },
+            "regressor_evaluation": {
+                "mse_losses": {
+                    "train": 0.02683870928392851,
+                    "test": 0.05172597823668079
+                },
+                "mae_losses": {
+                    "train": 0.02683870928392851,
+                    "test": 0.05172597823668079
+                },
+                "mse_health_index": {
+                    "train": 0.016604075207719535,
+                    "test": 0.028072155014468428
+                },
+                "mse_life_expectation": {
+                    "train": 0.03707334336013748,
+                    "test": 0.07537980145889314
+                },
+                "mae_health_index": {
+                    "train": 0.09579363915916163,
+                    "test": 0.12214264902216912
+                },
+                "mae_life_expectation": {
+                    "train": 0.12328910147934691,
+                    "test": 0.17504879973328932
+                }
+            }
+        },
+        {
+            "seed": 915,
+            "state_classifier_evaluation": {
+                "training_accuracy": 1.0,
+                "test_accuracy": 0.8559322033898306
+            },
+            "regressor_evaluation": {
+                "mse_losses": {
+                    "train": 0.025915962209544105,
+                    "test": 0.053903423679823335
+                },
+                "mae_losses": {
+                    "train": 0.025915962209544105,
+                    "test": 0.053903423679823335
+                },
+                "mse_health_index": {
+                    "train": 0.012983727134954175,
+                    "test": 0.02376078492065961
+                },
+                "mse_life_expectation": {
+                    "train": 0.03884819728413402,
+                    "test": 0.08404606243898709
+                },
+                "mae_health_index": {
+                    "train": 0.08250559627346134,
+                    "test": 0.10015069049244382
+                },
+                "mae_life_expectation": {
+                    "train": 0.13104477754413504,
+                    "test": 0.18049664418509478
+                }
+            }
+        },
+        {
+            "seed": 356,
+            "state_classifier_evaluation": {
+                "training_accuracy": 1.0,
+                "test_accuracy": 0.8898305084745762
+            },
+            "regressor_evaluation": {
+                "mse_losses": {
+                    "train": 0.02426749555369897,
+                    "test": 0.03507691600447663
+                },
+                "mae_losses": {
+                    "train": 0.02426749555369897,
+                    "test": 0.03507691600447663
+                },
+                "mse_health_index": {
+                    "train": 0.012332296541889316,
+                    "test": 0.01583143477040233
+                },
+                "mse_life_expectation": {
+                    "train": 0.03620269456550861,
+                    "test": 0.054322397238550924
+                },
+                "mae_health_index": {
+                    "train": 0.08583426079260911,
+                    "test": 0.09405813589537881
+                },
+                "mae_life_expectation": {
+                    "train": 0.12205107041585378,
+                    "test": 0.15246934357700828
+                }
+            }
+        },
+        {
+            "seed": 521,
+            "state_classifier_evaluation": {
+                "training_accuracy": 1.0,
+                "test_accuracy": 0.8559322033898306
+            },
+            "regressor_evaluation": {
+                "mse_losses": {
+                    "train": 0.026263634584958007,
+                    "test": 0.04947411164180155
+                },
+                "mae_losses": {
+                    "train": 0.026263634584958007,
+                    "test": 0.04947411164180155
+                },
+                "mse_health_index": {
+                    "train": 0.016322879863009895,
+                    "test": 0.02561880787090451
+                },
+                "mse_life_expectation": {
+                    "train": 0.03620438930690609,
+                    "test": 0.07332941541269854
+                },
+                "mae_health_index": {
+                    "train": 0.09361828036588636,
+                    "test": 0.11460302023102753
+                },
+                "mae_life_expectation": {
+                    "train": 0.12806581427047006,
+                    "test": 0.18347579601646985
+                }
+            }
+        },
+        {
+            "seed": 694,
+            "state_classifier_evaluation": {
+                "training_accuracy": 1.0,
+                "test_accuracy": 0.8728813559322034
+            },
+            "regressor_evaluation": {
+                "mse_losses": {
+                    "train": 0.024040436926320664,
+                    "test": 0.0448806570946236
+                },
+                "mae_losses": {
+                    "train": 0.024040436926320664,
+                    "test": 0.0448806570946236
+                },
+                "mse_health_index": {
+                    "train": 0.010804420013542636,
+                    "test": 0.02289459496745949
+                },
+                "mse_life_expectation": {
+                    "train": 0.037276453839098694,
+                    "test": 0.0668667192217877
+                },
+                "mae_health_index": {
+                    "train": 0.07565022515845735,
+                    "test": 0.1115581140054972
+                },
+                "mae_life_expectation": {
+                    "train": 0.11429269121340688,
+                    "test": 0.16669132824004995
+                }
+            }
+        }
+    ]
+}
