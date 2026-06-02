@@ -28,6 +28,8 @@ class Result:
         seeds = [rep["seed"] for rep in self.repetitions]
         power_classification_accuracies = [
             rep["power_classifier_evaluation"]["test_accuracy"]
+            if rep.get("power_classifier_evaluation")
+            else None
             for rep in self.repetitions
         ]
         fault_classification_accuracies = [

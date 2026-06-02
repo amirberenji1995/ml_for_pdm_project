@@ -25,12 +25,13 @@ from damavand.damavand.signal_processing.feature_extraction import (
 )
 import scipy
 from sklearn.model_selection import train_test_split
-from keras.optimizers import Adam
+from tensorflow.keras.optimizers import Adam
 from sklearn.metrics import confusion_matrix
 from hust_dataset.experiments.config import power_classifiers, Configurations
 from hust_dataset.experiments.result import Result
 import argparse
 import json
+import tensorflow as tf
 
 parser = argparse.ArgumentParser()
 
@@ -68,13 +69,29 @@ config["experiment_type"] = parser.parse_args().experiment_type
 config["power_classifier"] = parser.parse_args().power_classifier
 
 if parser.parse_args().power_classifier_params is not None:
-    config["power_classifier_params"][config["power_classifier"]].update(
-        parser.parse_args().power_classifier_params
-    )
+    if parser.parse_args().power_classifier_params is not None:
+        config["power_classifier_params"][config["power_classifier"]].update(
+            parser.parse_args().power_classifier_params
+        )
 
 ### Generating random seeds
 
 random_seeds = np.random.randint(1000, size=(config["repetitions"]))
+
+
+# Check for GPU availability
+gpus = tf.config.list_physical_devices("GPU")
+if gpus:
+    print(f"✅ GPU detected: {gpus}")
+    # Optional: Enable memory growth so TensorFlow doesn't hog all VRAM at once
+    try:
+        for gpu in gpus:
+            tf.config.experimental.set_memory_growth(gpu, True)
+        print("✅ GPU Memory growth enabled")
+    except RuntimeError as e:
+        print(e)
+else:
+    print("❌ No GPU detected. TensorFlow will default to CPU.")
 
 
 def main(config, random_seeds):
@@ -238,6 +255,8 @@ def main(config, random_seeds):
             x_test_scaled = np.concatenate((x_test_scaled, aux_features_test), axis=1)
             print("\n\nAdditional features added.\n\n")
 
+        else:
+            temp_results["power_classifier_evaluation"] = None
         ### Instantiating the fault classifier
         fault_classifer = config["fault_classifiers"][config["experiment_type"]]()
 
@@ -287,7 +306,8 @@ if __name__ == "__main__":
     ### Running the experiment
     results = main(config, random_seeds)
 
+    ### Declaring the file_name
+    file_name = f"results/{config['experiment_type']}_{config['power_classifier'] if config['power_classifier'] is not None else 'None'}_{config['power_classifier_params'][config['power_classifier']] if config['power_classifier'] is not None else 'None'}.json"
+
     ### Exporting the results
-    results.export_json(
-        base_dir=f"results/{config['experiment_type']}_{config['power_classifier']}_{config['power_classifier_params'][config['power_classifier']]}.json"
-    )
+    results.export_json(base_dir=file_name)

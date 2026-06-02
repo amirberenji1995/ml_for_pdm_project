@@ -25,7 +25,7 @@ class Configurations:
             "ANN": {
                 "loss": "categorical_crossentropy",
                 "lr": 1e-3,
-                "epochs": 1,
+                "epochs": 1500,
             },
         }
         self.aux_feature_type = "softcore"
@@ -36,7 +36,7 @@ class Configurations:
             "with_additional_features": with_additional_features_model_creator,
         }
         self.fault_classifier_training_params = {
-            "lr": 5e-3,
-            "epochs": 1,
+            "lr": 1e-3,
+            "epochs": 1500,
             "val_split": 0.2,
         }
