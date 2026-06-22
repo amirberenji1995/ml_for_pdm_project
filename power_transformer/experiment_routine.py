@@ -2,7 +2,12 @@
 
 import numpy as np
 import pandas as pd
-from sklearn.preprocessing import LabelEncoder, LabelBinarizer, MinMaxScaler
+from sklearn.preprocessing import (
+    LabelEncoder,
+    LabelBinarizer,
+    MinMaxScaler,
+    OneHotEncoder,
+)
 from sklearn.model_selection import train_test_split
 from keras.optimizers import Adam
 from sklearn.metrics import mean_squared_error, mean_absolute_error
@@ -37,6 +42,7 @@ parser.add_argument(
 
 parser.add_argument("--state_classifier_params", type=json.loads, default={})
 
+parser.add_argument("--aux_feature_type", type=str, default="softcore")
 
 ### Instantiating from the configurations class
 
@@ -46,6 +52,7 @@ config = Configurations().__dict__
 config["repetitions"] = parser.parse_args().repetitions
 config["experiment_type"] = parser.parse_args().experiment_type
 config["state_classifier"] = parser.parse_args().state_classifier
+config["aux_feature_type"] = parser.parse_args().aux_feature_type
 if parser.parse_args().state_classifier is not None:
     if parser.parse_args().state_classifier_params is not None:
         config["state_classifier_params"][config["state_classifier"]].update(
@@ -197,10 +204,18 @@ def main(config, random_seeds):
                     aux_features_test = state_classifier.predict_proba(x_test_scaled)
 
             elif config["aux_feature_type"] == "hardcore":
-                # TODO: Implement hardcore
+                # TODO: Implement hardcore for ANN
 
-                aux_features_train = state_classifier.predict(x_train_scaled)
-                aux_features_test = state_classifier.predict(x_test_scaled)
+                aux_features_train = state_classifier.predict(x_train_scaled).reshape(
+                    -1, 1
+                )
+                aux_features_test = state_classifier.predict(x_test_scaled).reshape(
+                    -1, 1
+                )
+
+                one_hot = OneHotEncoder(sparse_output=False)
+                aux_features_train = one_hot.fit_transform(aux_features_train)
+                aux_features_test = one_hot.transform(aux_features_test)
 
             ### Forming the auxiliary features
             x_train_scaled = np.concatenate(
@@ -278,7 +293,7 @@ if __name__ == "__main__":
     results = main(config, random_seeds)
 
     ### Declaring the file_name
-    file_name = f"results/{config['experiment_type']}_{config['state_classifier'] if config['state_classifier'] is not None else 'None'}_{config['state_classifier_params'][config['state_classifier']] if config['state_classifier'] is not None else 'None'}.json"
+    file_name = f"results/{config['experiment_type']}_{config['state_classifier'] if config['state_classifier'] is not None else 'None'}_{config['state_classifier_params'][config['state_classifier']] if config['state_classifier'] is not None else 'None'}{config['aux_feature_type'] if config['aux_feature_type'] == 'hardcore' else ''}.json"
 
     ### Exporting the results
     results.export_json(base_dir=file_name)

@@ -52,12 +52,12 @@ def ann_power_classifier():
     input = Input(shape=(11,), name="input")
     emb = Dense(
         units=11,
-        activation="relu",
+        activation="tanh",
         name="HL1",
     )(input)
     emb = Dense(
         units=11,
-        activation="relu",
+        activation="tanh",
         name="HL2",
     )(emb)
     predicted_values = Dense(units=3, activation="softmax")(emb)

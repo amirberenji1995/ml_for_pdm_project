@@ -1,5 +1,6 @@
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.svm import SVC
+from sklearn.cluster import KMeans
 from hust_dataset.experiments.model_repository import (
     original_model_creator,
     with_additional_features_model_creator,
@@ -10,6 +11,7 @@ power_classifiers = {
     "RF": RandomForestClassifier,
     "SVM": SVC,
     "ANN": ann_power_classifier,
+    "k-means": KMeans,
 }
 
 
@@ -24,9 +26,10 @@ class Configurations:
             "RF": {},
             "ANN": {
                 "loss": "categorical_crossentropy",
-                "lr": 1e-3,
-                "epochs": 1500,
+                "lr": 1e-2,
+                "epochs": 1000,
             },
+            "k-means": {"n_clusters": 3},
         }
         self.aux_feature_type = "softcore"
         self.repetitions = 5

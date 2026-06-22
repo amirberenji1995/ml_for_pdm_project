@@ -15,3 +15,6 @@ python experiment_routine.py --experiment_type with_additional_features --power_
 python experiment_routine.py --experiment_type with_additional_features --power_classifier SVM --power_classifier_params '{"kernel": "sigmoid"}'
 python experiment_routine.py --experiment_type with_additional_features --power_classifier SVM --power_classifier_params '{"kernel": "poly", "degree": 3}'
 python experiment_routine.py --experiment_type with_additional_features --power_classifier SVM --power_classifier_params '{"kernel": "rbf"}'
+
+### k-means
+python experiment_routine.py --experiment_type with_additional_features --power_classifier k-means --power_classifier_params '{"n_clusters": 3}'

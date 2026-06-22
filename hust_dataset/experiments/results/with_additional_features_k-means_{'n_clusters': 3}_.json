@@ -1,0 +1,424 @@
+{
+    "config": {
+        "dataset_base_dir": "/nfs/home/amiber/ml_for_pdm_course_project/hust/HUST bearing a practical dataset for ball bearing fault diagnosis/HUST bearing dataset/",
+        "dataset_mining_params": {
+            "win_len": 5000,
+            "hop_len": 5000
+        },
+        "experiment_type": "with_additional_features",
+        "power_classifier": "k-means",
+        "power_classifier_params": {
+            "SVM": {
+                "probability": true
+            },
+            "RF": {},
+            "ANN": {
+                "loss": "categorical_crossentropy",
+                "lr": 0.01,
+                "epochs": 1000
+            },
+            "k-means": {
+                "n_clusters": 3
+            }
+        },
+        "aux_feature_type": "softcore",
+        "repetitions": 5,
+        "test_size": 0.2,
+        "fault_classifier_training_params": {
+            "lr": 0.001,
+            "epochs": 1500,
+            "val_split": 0.2
+        }
+    },
+    "repetitions": [
+        {
+            "seed": 197,
+            "power_classifier_evaluation": {
+                "training_inertia": 1168.1175694832602,
+                "test_score": -387.18678089611166
+            },
+            "fault_classifier_evaluation": {
+                "training_accuracy": 0.9535807371139526,
+                "test_accuracy": 0.9449691772460938
+            },
+            "fault_classifier_confusion_matrix": [
+                [
+                    258,
+                    0,
+                    1,
+                    1,
+                    0,
+                    7,
+                    18
+                ],
+                [
+                    0,
+                    383,
+                    0,
+                    0,
+                    0,
+                    12,
+                    0
+                ],
+                [
+                    2,
+                    0,
+                    278,
+                    1,
+                    0,
+                    0,
+                    22
+                ],
+                [
+                    1,
+                    1,
+                    0,
+                    348,
+                    0,
+                    16,
+                    5
+                ],
+                [
+                    0,
+                    0,
+                    0,
+                    0,
+                    369,
+                    0,
+                    0
+                ],
+                [
+                    2,
+                    4,
+                    1,
+                    3,
+                    0,
+                    336,
+                    19
+                ],
+                [
+                    6,
+                    1,
+                    6,
+                    4,
+                    0,
+                    1,
+                    329
+                ]
+            ]
+        },
+        {
+            "seed": 375,
+            "power_classifier_evaluation": {
+                "training_inertia": 1162.9638735775318,
+                "test_score": -409.6897472823485
+            },
+            "fault_classifier_evaluation": {
+                "training_accuracy": 0.9045597910881042,
+                "test_accuracy": 0.8965092301368713
+            },
+            "fault_classifier_confusion_matrix": [
+                [
+                    249,
+                    0,
+                    4,
+                    0,
+                    0,
+                    12,
+                    28
+                ],
+                [
+                    0,
+                    354,
+                    0,
+                    5,
+                    0,
+                    21,
+                    3
+                ],
+                [
+                    5,
+                    5,
+                    275,
+                    1,
+                    0,
+                    3,
+                    35
+                ],
+                [
+                    0,
+                    18,
+                    0,
+                    325,
+                    0,
+                    28,
+                    11
+                ],
+                [
+                    0,
+                    0,
+                    0,
+                    0,
+                    364,
+                    0,
+                    0
+                ],
+                [
+                    0,
+                    12,
+                    0,
+                    5,
+                    0,
+                    325,
+                    19
+                ],
+                [
+                    10,
+                    3,
+                    4,
+                    5,
+                    0,
+                    15,
+                    291
+                ]
+            ]
+        },
+        {
+            "seed": 469,
+            "power_classifier_evaluation": {
+                "training_inertia": 1279.5009279332867,
+                "test_score": -442.842340770473
+            },
+            "fault_classifier_evaluation": {
+                "training_accuracy": 0.9463234543800354,
+                "test_accuracy": 0.939630389213562
+            },
+            "fault_classifier_confusion_matrix": [
+                [
+                    239,
+                    0,
+                    2,
+                    2,
+                    0,
+                    11,
+                    4
+                ],
+                [
+                    0,
+                    357,
+                    0,
+                    2,
+                    0,
+                    6,
+                    0
+                ],
+                [
+                    0,
+                    0,
+                    314,
+                    0,
+                    0,
+                    1,
+                    12
+                ],
+                [
+                    0,
+                    3,
+                    1,
+                    378,
+                    0,
+                    15,
+                    5
+                ],
+                [
+                    0,
+                    0,
+                    0,
+                    0,
+                    378,
+                    0,
+                    0
+                ],
+                [
+                    3,
+                    9,
+                    0,
+                    31,
+                    0,
+                    317,
+                    8
+                ],
+                [
+                    4,
+                    1,
+                    16,
+                    1,
+                    0,
+                    10,
+                    305
+                ]
+            ]
+        },
+        {
+            "seed": 986,
+            "power_classifier_evaluation": {
+                "training_inertia": 1177.590120212427,
+                "test_score": -397.7289253570643
+            },
+            "fault_classifier_evaluation": {
+                "training_accuracy": 0.926879346370697,
+                "test_accuracy": 0.9277207255363464
+            },
+            "fault_classifier_confusion_matrix": [
+                [
+                    231,
+                    1,
+                    4,
+                    1,
+                    0,
+                    8,
+                    3
+                ],
+                [
+                    0,
+                    381,
+                    0,
+                    4,
+                    0,
+                    9,
+                    0
+                ],
+                [
+                    6,
+                    0,
+                    293,
+                    0,
+                    0,
+                    0,
+                    9
+                ],
+                [
+                    0,
+                    2,
+                    0,
+                    343,
+                    0,
+                    16,
+                    5
+                ],
+                [
+                    0,
+                    0,
+                    0,
+                    0,
+                    380,
+                    2,
+                    0
+                ],
+                [
+                    12,
+                    7,
+                    4,
+                    10,
+                    0,
+                    353,
+                    4
+                ],
+                [
+                    15,
+                    4,
+                    16,
+                    11,
+                    0,
+                    23,
+                    278
+                ]
+            ]
+        },
+        {
+            "seed": 302,
+            "power_classifier_evaluation": {
+                "training_inertia": 1184.159358696391,
+                "test_score": -387.74980360365964
+            },
+            "fault_classifier_evaluation": {
+                "training_accuracy": 0.9023689031600952,
+                "test_accuracy": 0.9006159901618958
+            },
+            "fault_classifier_confusion_matrix": [
+                [
+                    237,
+                    0,
+                    5,
+                    0,
+                    0,
+                    15,
+                    5
+                ],
+                [
+                    0,
+                    343,
+                    2,
+                    14,
+                    0,
+                    23,
+                    0
+                ],
+                [
+                    1,
+                    0,
+                    255,
+                    0,
+                    0,
+                    12,
+                    25
+                ],
+                [
+                    0,
+                    2,
+                    3,
+                    350,
+                    0,
+                    38,
+                    1
+                ],
+                [
+                    0,
+                    0,
+                    0,
+                    0,
+                    392,
+                    0,
+                    0
+                ],
+                [
+                    3,
+                    2,
+                    0,
+                    20,
+                    0,
+                    351,
+                    8
+                ],
+                [
+                    11,
+                    1,
+                    8,
+                    12,
+                    0,
+                    31,
+                    265
+                ]
+            ]
+        }
+    ],
+    "classes": [
+        "B",
+        "I",
+        "IB",
+        "IO",
+        "N",
+        "O",
+        "OB"
+    ]
+}

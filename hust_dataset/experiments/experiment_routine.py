@@ -12,7 +12,12 @@ if project_root not in sys.path:
 import numpy as np
 from dataset import HUST
 import pandas as pd
-from sklearn.preprocessing import LabelEncoder, LabelBinarizer, MinMaxScaler
+from sklearn.preprocessing import (
+    LabelEncoder,
+    LabelBinarizer,
+    MinMaxScaler,
+    OneHotEncoder,
+)
 from damavand.damavand.signal_processing.feature_extraction import (
     feature_extractor,
     smsa,
@@ -52,11 +57,13 @@ parser.add_argument(
 parser.add_argument(
     "--power_classifier",
     type=str,
-    choices=["RF", "SVM", "ANN"],
+    choices=["RF", "SVM", "ANN", "k-means"],
     default=None,
 )
 
 parser.add_argument("--power_classifier_params", type=json.loads, default=None)
+
+parser.add_argument("--aux_feature_type", type=str, default="softcore")
 
 
 ### Instantiating from the configurations class
@@ -67,6 +74,7 @@ config = Configurations().__dict__
 config["repetitions"] = parser.parse_args().repetitions
 config["experiment_type"] = parser.parse_args().experiment_type
 config["power_classifier"] = parser.parse_args().power_classifier
+config["aux_feature_type"] = parser.parse_args().aux_feature_type
 
 if parser.parse_args().power_classifier_params is not None:
     if parser.parse_args().power_classifier_params is not None:
@@ -175,17 +183,19 @@ def main(config, random_seeds):
         x_test_scaled = feature_scaler.transform(x_test)
 
         ### Checking the experiment type
-
         if config["experiment_type"] == "with_additional_features":
-            ### Instantiating the power classifier
             if config["power_classifier"] == "ANN":
                 power_classifier = power_classifiers[config["power_classifier"]]()
-
+            # elif config["power_classifier"] == "k-means":
+            #     power_classifier = KMeans(
+            #         **config["power_classifier_params"][config["power_classifier"]]
+            #     )
             else:
                 power_classifier = power_classifiers[config["power_classifier"]](
                     **config["power_classifier_params"][config["power_classifier"]]
                 )
 
+            ### Training the power classifier / clusterer
             if config["power_classifier"] == "ANN":
                 power_binarizer = LabelBinarizer()
                 z_train = power_binarizer.fit_transform(z_train)
@@ -210,10 +220,21 @@ def main(config, random_seeds):
                     metrics=["accuracy"],
                 )
 
-            ### Training the power classifier
-            power_classifier.fit(x_train_scaled, z_train)
+                power_classifier.fit(
+                    x_train_scaled,
+                    z_train,
+                    batch_size=16,
+                    epochs=config["power_classifier_params"][
+                        config["power_classifier"]
+                    ]["epochs"],
+                )
+            elif config["power_classifier"] == "k-means":
+                # Unsupervised: fit only on the scaled features without labels
+                power_classifier.fit(x_train_scaled)
+            else:
+                power_classifier.fit(x_train_scaled, z_train)
 
-            ### Evaluating the power classifier
+            ### Evaluating the power classifier / clusterer
             if config["power_classifier"] == "ANN":
                 temp_results["power_classifier_evaluation"] = {
                     "training_accuracy": power_classifier.evaluate(
@@ -223,7 +244,12 @@ def main(config, random_seeds):
                         1
                     ],
                 }
-
+            elif config["power_classifier"] == "k-means":
+                # KMeans uses inertia (sum of squared distances) instead of accuracy
+                temp_results["power_classifier_evaluation"] = {
+                    "training_inertia": float(power_classifier.inertia_),
+                    "test_score": float(power_classifier.score(x_test_scaled)),
+                }
             else:
                 temp_results["power_classifier_evaluation"] = {
                     "training_accuracy": power_classifier.score(
@@ -233,27 +259,47 @@ def main(config, random_seeds):
                 }
 
             ### Checking the auxiliary feature type
-
             if config["aux_feature_type"] == "softcore":
                 if config["power_classifier"] == "ANN":
                     aux_features_train = power_classifier.predict(x_train_scaled)
                     aux_features_test = power_classifier.predict(x_test_scaled)
+                elif config["power_classifier"] == "k-means":
+                    # Convert distance space to soft probability distributions using negative softmax
+                    dist_train = power_classifier.transform(x_train_scaled)
+                    dist_test = power_classifier.transform(x_test_scaled)
+                    aux_features_train = scipy.special.softmax(-dist_train, axis=1)
+                    aux_features_test = scipy.special.softmax(-dist_test, axis=1)
                 else:
                     aux_features_train = power_classifier.predict_proba(x_train_scaled)
                     aux_features_test = power_classifier.predict_proba(x_test_scaled)
 
             elif config["aux_feature_type"] == "hardcore":
-                # TODO: Implement hardcore
+                if config["power_classifier"] == "ANN":
+                    aux_features_train = np.argmax(
+                        power_classifier.predict(x_train_scaled), axis=1
+                    )
+                    aux_features_test = np.argmax(
+                        power_classifier.predict(x_test_scaled), axis=1
+                    )
+                else:
+                    # Both scikit-learn classifiers and KMeans use .predict() for hard labels
+                    aux_features_train = power_classifier.predict(x_train_scaled)
+                    aux_features_test = power_classifier.predict(x_test_scaled)
 
-                aux_features_train = power_classifier.predict(x_train_scaled)
-                aux_features_test = power_classifier.predict(x_test_scaled)
+                # Reshape 1D predictions into 2D column vectors for OneHotEncoder
+                aux_features_train = aux_features_train.reshape(-1, 1)
+                aux_features_test = aux_features_test.reshape(-1, 1)
+
+                one_hot = OneHotEncoder(sparse_output=False)
+                aux_features_train = one_hot.fit_transform(aux_features_train)
+                aux_features_test = one_hot.transform(aux_features_test)
 
             ### Forming the auxiliary features
             x_train_scaled = np.concatenate(
                 (x_train_scaled, aux_features_train), axis=1
             )
             x_test_scaled = np.concatenate((x_test_scaled, aux_features_test), axis=1)
-            print("\n\nAdditional features added.\n\n")
+            print("\n\nAdditional clustering features added.\n\n")
 
         else:
             temp_results["power_classifier_evaluation"] = None
@@ -307,7 +353,7 @@ if __name__ == "__main__":
     results = main(config, random_seeds)
 
     ### Declaring the file_name
-    file_name = f"results/{config['experiment_type']}_{config['power_classifier'] if config['power_classifier'] is not None else 'None'}_{config['power_classifier_params'][config['power_classifier']] if config['power_classifier'] is not None else 'None'}.json"
+    file_name = f"results/{config['experiment_type']}_{config['power_classifier'] if config['power_classifier'] is not None else 'None'}_{config['power_classifier_params'][config['power_classifier']] if config['power_classifier'] is not None else 'None'}_{config['aux_feature_type'] if config['aux_feature_type'] == 'hardcore' else ''}.json"
 
     ### Exporting the results
     results.export_json(base_dir=file_name)

@@ -26,12 +26,16 @@ class Result:
 
     def tabulate(self):
         seeds = [rep["seed"] for rep in self.repetitions]
+
         power_classification_accuracies = [
-            rep["power_classifier_evaluation"]["test_accuracy"]
+            rep["power_classifier_evaluation"].get(
+                "test_accuracy", rep["power_classifier_evaluation"].get("test_score")
+            )
             if rep.get("power_classifier_evaluation")
             else None
             for rep in self.repetitions
         ]
+
         fault_classification_accuracies = [
             rep["fault_classifier_evaluation"]["test_accuracy"]
             for rep in self.repetitions
